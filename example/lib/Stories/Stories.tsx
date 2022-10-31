@@ -46,6 +46,13 @@ const Stories: React.FC<IStoriesProps> = ({stories}) => {
       outputRange: [width / 2, -width / 2],
       extrapolate: 'clamp',
     });
+    const extra = width / 2 / Math.cos(A / 2) - width / 2;
+
+    const translateX2 = x.interpolate({
+      inputRange,
+      outputRange: [-extra, extra],
+      extrapolate: 'clamp',
+    });
     return {
       ...StyleSheet.absoluteFillObject,
       transform: [
@@ -53,6 +60,7 @@ const Stories: React.FC<IStoriesProps> = ({stories}) => {
         {translateX},
         {rotateY},
         {translateX: translateX1},
+        {translateX: translateX2},
       ],
     };
   };
@@ -74,6 +82,8 @@ const Stories: React.FC<IStoriesProps> = ({stories}) => {
           useNativeDriver: true,
         })}
         horizontal={true}
+        snapToInterval={width}
+        decelerationRate="fast"
       />
     </View>
   );

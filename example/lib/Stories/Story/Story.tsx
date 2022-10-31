@@ -1,5 +1,5 @@
 import React from 'react';
-import {Image} from 'react-native';
+import {Image, SafeAreaView, View} from 'react-native';
 import {IStory} from '../Stories';
 /**
  * ? Local Imports
@@ -12,7 +12,12 @@ interface IStoryProps {
 
 const Story: React.FC<IStoryProps> = ({storyItem}) => {
   const {storyPhoto} = storyItem;
-  return <Image style={styles.imageStyle} source={storyPhoto} />;
+  return (
+    <SafeAreaView style={styles.container}>
+      <Image style={styles.imageStyle} source={storyPhoto} />
+      <View style={styles.footer}></View>
+    </SafeAreaView>
+  );
 };
 
 export default Story;
