@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Animated, Dimensions, ScrollView, StyleSheet, View} from 'react-native';
+import {Animated, Dimensions, StyleSheet, View, ViewStyle} from 'react-native';
 /**
  * ? Local Imports
  */
@@ -7,6 +7,8 @@ import styles from './Stories.style';
 import Story from './Story/Story';
 
 const {width} = Dimensions.get('window');
+const perspective = 350;
+const A = Math.atan(perspective / width / 2);
 
 export type IStory = {
   id: string;
@@ -26,11 +28,40 @@ interface IState {
 const Stories: React.FC<IStoriesProps> = ({stories}) => {
   const [x] = useState(new Animated.Value(0));
 
+  const getAnimatedViewStyle = (index: number): ViewStyle => {
+    const offset = width * index;
+    const inputRange = [offset - width, offset + width];
+    const translateX = x.interpolate({
+      inputRange,
+      outputRange: [width / 2, -width / 2],
+      extrapolate: 'clamp',
+    });
+    const rotateY = x.interpolate({
+      inputRange,
+      outputRange: [`${A}rad`, `-${A}rad`],
+      extrapolate: 'clamp',
+    });
+    const translateX1 = x.interpolate({
+      inputRange,
+      outputRange: [width / 2, -width / 2],
+      extrapolate: 'clamp',
+    });
+    return {
+      ...StyleSheet.absoluteFillObject,
+      transform: [
+        {perspective},
+        {translateX},
+        {rotateY},
+        {translateX: translateX1},
+      ],
+    };
+  };
+
   return (
     <View style={styles.container}>
-      {stories.map(storyItem => (
+      {stories.map((storyItem, index) => (
         //* AbsoluteFill is an easy way to set a view to be full screen and absolute positioned.
-        <Animated.View style={StyleSheet.absoluteFill} key={storyItem.id}>
+        <Animated.View style={getAnimatedViewStyle(index)} key={storyItem.id}>
           <Story {...{storyItem}} />
         </Animated.View>
       ))}
